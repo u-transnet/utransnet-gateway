@@ -22,8 +22,8 @@ class AccountTransfersProcessor(object):
             return transaction.tx_id
         return 0
 
-    def __decode_memo(self, memo, bitshares_instance):
-        return Memo(memo['from'], memo['to'], bitshares_instance).decrypt(memo['message'])
+    def __decode_memo(self, account_from, account_to, memo, bitshares_instance):
+        return Memo(account_from, account_to, bitshares_instance).decrypt(memo)
 
     def process_transactions(self):
         account = Account(self.address)
@@ -37,7 +37,7 @@ class AccountTransfersProcessor(object):
         new_transactions = []
         for tx in txs:
             operation_data = tx['op'][1]
-            if operation_data['to'] != account['id']:
+            if operation_data['to'] != account['id'] or not operation_data.get('memo'):
                 continue
 
             transaction = self.transaction_model.objects.create(
@@ -45,9 +45,9 @@ class AccountTransfersProcessor(object):
                 trx_in_block=tx['trx_in_block'],
                 op_in_trx=tx['op_in_trx'],
                 asset=Asset(operation_data['amount']['asset_id']).symbol,
-                amount=operation_data['amount'] / pow(10, 5),
+                amount=operation_data['amount']['amount'] / pow(10, 5),
                 account_external=Account(operation_data['from']).name,
-                account_internal=self.__decode_memo(operation_data['memo'], self.blockchain_api)
+                account_internal=self.__decode_memo(operation_data['from'], operation_data['to'], operation_data['memo'], self.blockchain_api)
             )
             new_transactions.append(transaction)
 

@@ -164,3 +164,5 @@ LOGGING = {
         },
     }
 }
+
+from gateway.settings import *
