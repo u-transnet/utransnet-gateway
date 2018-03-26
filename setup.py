@@ -11,7 +11,7 @@ requirements = [
 
 if __name__ == '__setup__':
     setup(
-        name='utschool-faucet',
+        name='utransnet-gateway',
         version='1.0',
         url='https://github.com/u-transnet/utransnet-gateway',
         license='MIT',
