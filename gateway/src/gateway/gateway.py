@@ -1,4 +1,5 @@
 from bitshares import BitShares
+from transnet import Transnet
 
 from gateway import settings
 from gateway.models import BitsharesTransaction, TransnetTransaction
@@ -19,7 +20,7 @@ class BitsharesGateway(object):
             keys=[settings.BITSHARES_GATEWAY_WIF]
         )
 
-        self.transnet = BitShares(
+        self.transnet = Transnet(
             settings.TRANSNET_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
             keys=[settings.TRANSNET_GATEWAY_WIF]
