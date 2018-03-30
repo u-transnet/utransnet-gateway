@@ -5,7 +5,7 @@ from gateway.src.gateway.gateway import TransnetGateway, BitsharesGateway
 
 
 class Command(BaseCommand):
-    CASE_BITSHARES = 'bitshares'
+    CASE_BITSHARES = 'transnet'
     CASE_TRANSNET = 'transnet'
 
     GATEWAYS = {

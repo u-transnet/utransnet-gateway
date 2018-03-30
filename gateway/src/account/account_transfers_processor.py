@@ -3,6 +3,7 @@ from bitshares.asset import Asset
 from logging import getLogger
 
 from bitshares.memo import Memo
+from decimal import Decimal
 
 logger = getLogger(__name__)
 
@@ -23,7 +24,10 @@ class AccountTransfersProcessor(object):
         return 0
 
     def __decode_memo(self, account_from, account_to, memo, bitshares_instance):
-        return Memo(account_from, account_to, bitshares_instance).decrypt(memo)
+        try:
+            return Memo(account_from, account_to, bitshares_instance).decrypt(memo)
+        except:
+            return ''
 
     def process_transactions(self):
         account = Account(self.address)
@@ -40,14 +44,16 @@ class AccountTransfersProcessor(object):
             if operation_data['to'] != account['id'] or not operation_data.get('memo'):
                 continue
 
+            asset = Asset(operation_data['amount']['asset_id'])
+            account_internal = self.__decode_memo(operation_data['from'], operation_data['to'], operation_data['memo'], self.blockchain_api)
             transaction = self.transaction_model.objects.create(
                 trx_id=tx['id'],
                 trx_in_block=tx['trx_in_block'],
                 op_in_trx=tx['op_in_trx'],
-                asset=Asset(operation_data['amount']['asset_id']).symbol,
-                amount=operation_data['amount']['amount'] / pow(10, 5),
+                asset=asset.symbol,
+                amount=Decimal(operation_data['amount']['amount'])/10 ** asset.precision,
                 account_external=Account(operation_data['from']).name,
-                account_internal=self.__decode_memo(operation_data['from'], operation_data['to'], operation_data['memo'], self.blockchain_api)
+                account_internal=account_internal
             )
             new_transactions.append(transaction)
 
