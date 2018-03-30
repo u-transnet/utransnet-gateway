@@ -18,9 +18,9 @@ class AccountTransfersProcessor(object):
         self.limit = limit
 
     def __get_latest_transaction_id(self):
-        transaction = self.transaction_model.objects.last()
+        transaction = self.transaction_model.objects.order_by('id').last()
         if transaction:
-            return transaction.tx_id
+            return transaction.trx_id
         return 0
 
     def __decode_memo(self, account_from, account_to, memo, bitshares_instance):
@@ -36,7 +36,7 @@ class AccountTransfersProcessor(object):
             txs = account.history(0, self.__get_latest_transaction_id(), self.limit, only_ops=["transfer"])
         except Exception as exc:
             logger.exception("Can't retrieve history from blockchain")
-            return
+            return []
 
         new_transactions = []
         for tx in txs:
