@@ -29,7 +29,10 @@ class BitSharesGatewayTest(TestCase):
         self.bitshares = BitShares(
             settings.BITSHARES_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys=[settings.BITSHARES_GATEWAY_WIF]
+            keys={
+                'active': settings.BITSHARES_GATEWAY_WIF,
+                'memo': settings.BITSHARES_GATEWAY_WIF_MEMO
+            }
         )
 
         handler = TestHandler()
@@ -58,7 +61,10 @@ class BitSharesGatewayTest(TestCase):
         transnet = Transnet(
             settings.TRANSNET_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys=[settings.TRANSNET_GATEWAY_WIF]
+            keys={
+                'active': settings.TRANSNET_GATEWAY_WIF,
+                'memo': settings.TRANSNET_GATEWAY_WIF_MEMO
+            }
         )
         transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
 
@@ -74,7 +80,7 @@ class BitSharesGatewayTest(TestCase):
 
         handler = BitsharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
                                  transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                 Asset('UTECH.UTCORE'), {
+                                 {
                                     'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
                                  })
 
@@ -90,7 +96,10 @@ class TransnetGatewayTest(TestCase):
         self.transnet = Transnet(
             settings.TRANSNET_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys=[settings.TRANSNET_GATEWAY_WIF]
+            keys={
+                'active': settings.TRANSNET_GATEWAY_WIF,
+                'memo': settings.TRANSNET_GATEWAY_WIF_MEMO
+            }
         )
 
         handler = TestHandler()
@@ -112,14 +121,17 @@ class TransnetGatewayTest(TestCase):
         bitshares = BitShares(
             settings.BITSHARES_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys=[settings.BITSHARES_GATEWAY_WIF]
+            keys={
+                'active': settings.BITSHARES_GATEWAY_WIF,
+                'memo': settings.BITSHARES_GATEWAY_WIF_MEMO
+            }
         )
         bitshares.set_default_account(settings.BITSHARES_GATEWAY_ACCOUNT)
 
         transnet = Transnet(
             settings.TRANSNET_NODE_URL,
             nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys=[settings.TRANSNET_GATEWAY_WIF]
+            keys=[settings.TRANSNET_GATEWAY_WIF, settings.TRANSNET_GATEWAY_WIF_MEMO]
         )
         transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
 
@@ -134,10 +146,10 @@ class TransnetGatewayTest(TestCase):
         )
 
         handler = TransnetGatewayHandler(transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                 bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
-                                 TransnetAsset('UTECH.UTCORE'), {
-                                    'UTECH.UTCORE': Asset('UTECH.UTCORE')
-                                 })
+                                         bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
+                                         {
+                                            'UTECH.UTCORE': Asset('UTECH.UTCORE')
+                                         })
 
         handler.handle([transaction])
 
