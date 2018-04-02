@@ -2,9 +2,6 @@ from threading import Condition, Lock
 
 import signal
 
-from gateway.src.account.account_transfers_processor import BitSharesAccountTransfersProcessor, \
-    TransnetAccountTransfersProcessor
-
 
 class ListenerState:
     _active = False
@@ -21,13 +18,12 @@ class ListenerState:
             self._active = value
 
 
-class BaseAccountTransfersListener:
+class AccountTransfersListener:
     UPDATE_TIME_DEFAULT = 5
     handlers = []
 
-    def __init__(self, blockchain_api, memo_wif, account_address, transaction_model, update_time=UPDATE_TIME_DEFAULT):
-        self.transfers_processors = self._create_transfers_processor(blockchain_api, memo_wif, account_address,
-                                                                     transaction_model)
+    def __init__(self, transfer_provider, update_time=UPDATE_TIME_DEFAULT):
+        self.transfers_provider = transfer_provider
         self.update_time = update_time
         self.state = ListenerState()
         self.blocker = Condition(Lock())
@@ -61,7 +57,7 @@ class BaseAccountTransfersListener:
         self.blocker.acquire()
         try:
             while self.active:
-                new_transactions = self.transfers_processors.process_transactions()
+                new_transactions = self.transfers_provider.fetch_new_transactions()
                 for handler in self.handlers:
                     handler.handle(new_transactions, lambda: self.active)
                 if self.active:
@@ -84,13 +80,3 @@ class BaseAccountTransfersListener:
     @active.setter
     def active(self, value):
         self.state.active = value
-
-
-class BitSharesAccountTransfersListener(BaseAccountTransfersListener):
-    def _create_transfers_processor(self, blockchain_api, memo_wif, account_address, transaction_model):
-        return BitSharesAccountTransfersProcessor(blockchain_api, memo_wif, account_address, transaction_model)
-
-
-class TransnetAccountTransfersListener(BaseAccountTransfersListener):
-    def _create_transfers_processor(self, blockchain_api, memo_wif, account_address, transaction_model):
-        return TransnetAccountTransfersProcessor(blockchain_api, memo_wif, account_address, transaction_model)

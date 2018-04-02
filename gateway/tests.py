@@ -9,12 +9,14 @@ from transnet import Transnet
 from transnet.asset import Asset as TransnetAsset
 
 from gateway.models import BitsharesTransaction, TransnetTransaction
-from gateway.src.account.account_listener import TransnetAccountTransfersListener, BitSharesAccountTransfersListener
-from gateway.src.account.account_listener_base_handler import AccountListenerBaseHandler
-from gateway.src.gateway.gateway_handler import BitSharesGatewayHandler, TransnetGatewayHandler
+from gateway.src.account.account_listener import AccountTransfersListener
+from gateway.src.account.base_account_listener_handler import BaseAccountListenerHandler
+from gateway.src.account.account_transfers_provider import BitsharesAccountTransfersProvider, \
+    TransnetAccountTransfersProvider
+from gateway.src.gateway.gateway_handler import BitsharesGatewayHandler, TransnetGatewayHandler
 
 
-class TestHandler(AccountListenerBaseHandler):
+class TestAccountListenerHandler(BaseAccountListenerHandler):
     processed = False
 
     def handle(self, transactions, get_is_active):
@@ -33,10 +35,13 @@ class BitSharesGatewayTest(TestCase):
             }
         )
 
-        handler = TestHandler()
-        transfer_listener = BitSharesAccountTransfersListener(
+        handler = TestAccountListenerHandler()
+
+        transfers_provider = BitsharesAccountTransfersProvider(
             self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT,
-            BitsharesTransaction)
+            BitsharesTransaction
+        )
+        transfer_listener = AccountTransfersListener(transfers_provider)
         transfer_listener.add_handler(handler)
 
         threading.Thread(target=lambda: transfer_listener.start()).start()
@@ -77,10 +82,10 @@ class BitSharesGatewayTest(TestCase):
             account_internal='superpchelka23'
         )
 
-        handler = BitSharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
-                                          transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
+        handler = BitsharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
+                                          transnet, settings.TRANSNET_GATEWAY_ACCOUNT, settings.TRANSNET_GATEWAY_WIF_MEMO,
                                           {
-                                              'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
+                                              'UTECH.UTCORE': 'UTECH.UTCORE'
                                           })
 
         handler.handle([transaction], lambda: True)
@@ -100,9 +105,11 @@ class TransnetGatewayTest(TestCase):
             }
         )
 
-        handler = TestHandler()
-        transfer_listener = TransnetAccountTransfersListener(
-            self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
+        handler = TestAccountListenerHandler()
+        transfers_provider = TransnetAccountTransfersProvider(self.transnet,
+                                                              settings.TRANSNET_GATEWAY_WIF_MEMO,
+                                                              settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
+        transfer_listener = AccountTransfersListener(transfers_provider)
         transfer_listener.add_handler(handler)
 
         threading.Thread(target=lambda: transfer_listener.start()).start()
@@ -144,9 +151,9 @@ class TransnetGatewayTest(TestCase):
         )
 
         handler = TransnetGatewayHandler(transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                         bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
+                                         bitshares, settings.BITSHARES_GATEWAY_ACCOUNT, settings.BITSHARES_GATEWAY_WIF_MEMO,
                                          {
-                                             'UTECH.UTCORE': Asset('UTECH.UTCORE')
+                                             'UTECH.UTCORE': 'UTECH.UTCORE'
                                          })
 
         handler.handle([transaction], lambda: True)

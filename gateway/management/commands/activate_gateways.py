@@ -2,7 +2,7 @@ import signal
 from django.core.management.base import BaseCommand, CommandError
 from threading import Thread
 
-from gateway.src.gateway.gateway import TransnetGateway, BitsharesGateway
+from gateway.src.gateway.gateway import TransnetBitsharesGateway, BitsharesTransnetGateway
 
 
 class Blocker:
@@ -25,12 +25,12 @@ class Blocker:
 
 
 class Command(BaseCommand):
-    CASE_BITSHARES = 'bitshares'
-    CASE_TRANSNET = 'transnet'
+    CASE_BITSHARES = 'bitshares_transnet'
+    CASE_TRANSNET = 'transnet_bitshares'
 
     GATEWAYS = {
-        CASE_TRANSNET: TransnetGateway,
-        CASE_BITSHARES: BitsharesGateway
+        CASE_TRANSNET: TransnetBitsharesGateway,
+        CASE_BITSHARES: BitsharesTransnetGateway
     }
 
     help = 'Start gateway: %s, %s' % (CASE_BITSHARES, CASE_TRANSNET)

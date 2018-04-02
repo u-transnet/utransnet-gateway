@@ -1,16 +1,28 @@
 from bitshares import BitShares
-from bitshares.asset import Asset as BitsharesAsset
-
 from transnet import Transnet
-from transnet.asset import Asset as TransnetAsset
 
 from gateway import settings
 from gateway.models import BitsharesTransaction, TransnetTransaction
-from gateway.src.account.account_listener import BitSharesAccountTransfersListener, TransnetAccountTransfersListener
-from gateway.src.gateway.gateway_handler import TransnetGatewayHandler, BitSharesGatewayHandler
+from gateway.src.account.account_transfers_provider import TransnetAccountTransfersProvider, \
+    BitsharesAccountTransfersProvider
+from gateway.src.gateway.base_gateway import BaseGateway
+from gateway.src.gateway.gateway_handler import TransnetGatewayHandler, BitsharesGatewayHandler
+
+class TransnetBasedGateway(BaseGateway):
+    def __init__(self):
+        self.transnet = Transnet(
+            settings.TRANSNET_NODE_URL,
+            nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
+            keys={
+                'active': settings.TRANSNET_GATEWAY_WIF,
+            }
+        )
+        self.transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
+
+        super(TransnetBasedGateway, self).__init__()
 
 
-class BaseGateway(object):
+class BitsharesBasedGateway(BaseGateway):
     def __init__(self):
         self.bitshares = BitShares(
             settings.BITSHARES_NODE_URL,
@@ -19,64 +31,43 @@ class BaseGateway(object):
                 'active': settings.BITSHARES_GATEWAY_WIF,
             },
         )
-        self.bitshares.wallet.addPrivateKey(settings.BITSHARES_GATEWAY_WIF_MEMO)
         self.bitshares.set_default_account(settings.BITSHARES_GATEWAY_ACCOUNT)
 
-        self.transnet = Transnet(
-            settings.TRANSNET_NODE_URL,
-            nobroadcast=settings.BLOCKCHAIN_NOBROADCAST,
-            keys={
-                'active': settings.TRANSNET_GATEWAY_WIF,
-            }
-        )
-        self.transnet.wallet.addPrivateKey(settings.TRANSNET_GATEWAY_WIF_MEMO)
-        self.transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
-
-        self.transfer_listener = self._create_transfer_listener()
-
-    def _create_transfer_listener(self):
-        self.transfer_listener = None
-        raise NotImplementedError
-
-    def start(self):
-        self.transfer_listener.start()
-
-    def stop(self):
-        self.transfer_listener.stop()
-
-    @property
-    def active(self):
-        return self.transfer_listener.active
+        super(BitsharesBasedGateway, self).__init__()
 
 
-class BitsharesGateway(BaseGateway):
+class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
+    TRANSACTION_MODEL = BitsharesTransaction
     ASSETS_MAPPING = {
-        'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
+        'UTECH.UTCORE': 'UTECH.UTCORE'
     }
 
-    def _create_transfer_listener(self):
-        transfer_listener = BitSharesAccountTransfersListener(
-            self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT, BitsharesTransaction)
-        handler = BitSharesGatewayHandler(
+    def _create_transfers_handler(self):
+        return BitsharesGatewayHandler(
             self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
             self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT, settings.BITSHARES_GATEWAY_WIF_MEMO,
             self.ASSETS_MAPPING
         )
-        transfer_listener.add_handler(handler)
-        return transfer_listener
+
+    def _create_transfers_provider(self):
+        return BitsharesAccountTransfersProvider(
+            self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT,
+            self.TRANSACTION_MODEL)
 
 
-class TransnetGateway(BaseGateway):
+class TransnetBitsharesGateway(TransnetBasedGateway, BitsharesBasedGateway):
+    TRANSACTION_MODEL = TransnetTransaction
     ASSETS_MAPPING = {
-        'UTECH.UTCORE': BitsharesAsset('UTECH.UTCORE')
+        'UTECH.UTCORE': 'UTECH.UTCORE'
     }
 
-    def _create_transfer_listener(self):
-        transfer_listener = TransnetAccountTransfersListener(
-            self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
-        handler = TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                         self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,  settings.TRANSNET_GATEWAY_WIF_MEMO,
-                                         self.ASSETS_MAPPING
-                                         )
-        transfer_listener.add_handler(handler)
-        return transfer_listener
+    def _create_transfers_handler(self):
+        TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
+                               self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT, settings.TRANSNET_GATEWAY_WIF_MEMO,
+                               self.ASSETS_MAPPING
+                               )
+
+    def _create_transfers_provider(self):
+        TransnetAccountTransfersProvider(
+            self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT,
+            self.TRANSACTION_MODEL)

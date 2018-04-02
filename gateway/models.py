@@ -6,7 +6,7 @@ class AbstractBlockchainTransaction(models.Model):
     trx_in_block = models.PositiveIntegerField(verbose_name='Номер транзакции в блоке')
     op_in_trx = models.PositiveIntegerField(verbose_name='Номер операции в транзакции')
     asset = models.CharField(verbose_name='Токен', max_length=128)
-    amount = models.FloatField(verbose_name='Количество средст')
+    amount = models.FloatField(verbose_name='Количество средств')
     account_external = models.CharField(verbose_name='Внешний аккаунт', max_length=128)
     account_internal = models.CharField(verbose_name='Внутренний аккаунт', max_length=128)
 
