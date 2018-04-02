@@ -11,7 +11,7 @@ from transnet.asset import Asset as TransnetAsset
 from gateway.models import BitsharesTransaction, TransnetTransaction
 from gateway.src.account.account_listener import TransnetAccountTransfersListener, BitSharesAccountTransfersListener
 from gateway.src.account.account_listener_base_handler import AccountListenerBaseHandler
-from gateway.src.gateway.gateway_handler import BitsharesGatewayHandler, TransnetGatewayHandler
+from gateway.src.gateway.gateway_handler import BitSharesGatewayHandler, TransnetGatewayHandler
 
 
 class TestHandler(AccountListenerBaseHandler):
@@ -77,7 +77,7 @@ class BitSharesGatewayTest(TestCase):
             account_internal='superpchelka23'
         )
 
-        handler = BitsharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
+        handler = BitSharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
                                           transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
                                           {
                                               'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')

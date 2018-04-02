@@ -7,7 +7,7 @@ from transnet.asset import Asset as TransnetAsset
 from gateway import settings
 from gateway.models import BitsharesTransaction, TransnetTransaction
 from gateway.src.account.account_listener import BitSharesAccountTransfersListener, TransnetAccountTransfersListener
-from gateway.src.gateway.gateway_handler import TransnetGatewayHandler, BitsharesGatewayHandler
+from gateway.src.gateway.gateway_handler import TransnetGatewayHandler, BitSharesGatewayHandler
 
 
 class BaseGateway(object):
@@ -57,9 +57,9 @@ class BitsharesGateway(BaseGateway):
     def _create_transfer_listener(self):
         transfer_listener = BitSharesAccountTransfersListener(
             self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT, BitsharesTransaction)
-        handler = BitsharesGatewayHandler(
+        handler = BitSharesGatewayHandler(
             self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
-            self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
+            self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT, settings.BITSHARES_GATEWAY_WIF_MEMO,
             self.ASSETS_MAPPING
         )
         transfer_listener.add_handler(handler)
@@ -75,7 +75,7 @@ class TransnetGateway(BaseGateway):
         transfer_listener = TransnetAccountTransfersListener(
             self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
         handler = TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                         self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
+                                         self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,  settings.TRANSNET_GATEWAY_WIF_MEMO,
                                          self.ASSETS_MAPPING
                                          )
         transfer_listener.add_handler(handler)
