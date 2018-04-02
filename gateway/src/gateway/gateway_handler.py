@@ -33,8 +33,11 @@ class BaseGatewayHandler(AccountListenerBaseHandler):
     def burn_assets(self, amount, asset, account):
         raise NotImplementedError()
 
-    def handle(self, transactions):
+    def handle(self, transactions, get_is_active):
         for transaction in transactions:
+            if not get_is_active():
+                return
+
             target_asset = self.assets_mapping.get(transaction.asset)
             if not target_asset:
                 logger.error("Unrecognized assets %s" % transaction.asset)

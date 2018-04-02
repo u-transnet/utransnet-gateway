@@ -9,7 +9,7 @@ from transnet import Transnet
 from transnet.asset import Asset as TransnetAsset
 
 from gateway.models import BitsharesTransaction, TransnetTransaction
-from gateway.src.account.account_listener import AccountTransfersListener
+from gateway.src.account.account_listener import TransnetAccountTransfersListener, BitSharesAccountTransfersListener
 from gateway.src.account.account_listener_base_handler import AccountListenerBaseHandler
 from gateway.src.gateway.gateway_handler import BitsharesGatewayHandler, TransnetGatewayHandler
 
@@ -18,9 +18,8 @@ class TestHandler(AccountListenerBaseHandler):
 
     processed = False
 
-    def handle(self, transactions):
+    def handle(self, transactions, get_is_active):
         self.processed = True
-
 
 @override_settings(BLOCKCHAIN_NOBROADCAST=True)
 class BitSharesGatewayTest(TestCase):
@@ -36,8 +35,8 @@ class BitSharesGatewayTest(TestCase):
         )
 
         handler = TestHandler()
-        transfer_listener = AccountTransfersListener(
-            self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT, BitsharesTransaction)
+        transfer_listener = BitSharesAccountTransfersListener(
+            self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT, BitsharesTransaction)
         transfer_listener.add_handler(handler)
 
         threading.Thread(target=lambda: transfer_listener.start()).start()
@@ -84,7 +83,7 @@ class BitSharesGatewayTest(TestCase):
                                     'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
                                  })
 
-        handler.handle([transaction])
+        handler.handle([transaction], lambda: True)
 
         self.assertTrue(transaction.closed, 'Transaction must be properly processed')
 
@@ -103,8 +102,8 @@ class TransnetGatewayTest(TestCase):
         )
 
         handler = TestHandler()
-        transfer_listener = AccountTransfersListener(
-            self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
+        transfer_listener = TransnetAccountTransfersListener(
+            self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
         transfer_listener.add_handler(handler)
 
         threading.Thread(target=lambda: transfer_listener.start()).start()
@@ -151,7 +150,7 @@ class TransnetGatewayTest(TestCase):
                                             'UTECH.UTCORE': Asset('UTECH.UTCORE')
                                          })
 
-        handler.handle([transaction])
+        handler.handle([transaction], lambda: True)
 
         self.assertTrue(transaction.closed, 'Transaction must be properly processed')
 
