@@ -15,15 +15,14 @@ from gateway.src.gateway.gateway_handler import BitsharesGatewayHandler, Transne
 
 
 class TestHandler(AccountListenerBaseHandler):
-
     processed = False
 
     def handle(self, transactions, get_is_active):
         self.processed = True
 
+
 @override_settings(BLOCKCHAIN_NOBROADCAST=True)
 class BitSharesGatewayTest(TestCase):
-
     def test_account_listener(self):
         self.bitshares = BitShares(
             settings.BITSHARES_NODE_URL,
@@ -36,7 +35,8 @@ class BitSharesGatewayTest(TestCase):
 
         handler = TestHandler()
         transfer_listener = BitSharesAccountTransfersListener(
-            self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT, BitsharesTransaction)
+            self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT,
+            BitsharesTransaction)
         transfer_listener.add_handler(handler)
 
         threading.Thread(target=lambda: transfer_listener.start()).start()
@@ -78,10 +78,10 @@ class BitSharesGatewayTest(TestCase):
         )
 
         handler = BitsharesGatewayHandler(bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
-                                 transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                                 {
-                                    'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
-                                 })
+                                          transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
+                                          {
+                                              'UTECH.UTCORE': TransnetAsset('UTECH.UTCORE')
+                                          })
 
         handler.handle([transaction], lambda: True)
 
@@ -90,7 +90,6 @@ class BitSharesGatewayTest(TestCase):
 
 @override_settings(BLOCKCHAIN_NOBROADCAST=True)
 class TransnetGatewayTest(TestCase):
-
     def test_account_listener(self):
         self.transnet = Transnet(
             settings.TRANSNET_NODE_URL,
@@ -147,10 +146,9 @@ class TransnetGatewayTest(TestCase):
         handler = TransnetGatewayHandler(transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
                                          bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
                                          {
-                                            'UTECH.UTCORE': Asset('UTECH.UTCORE')
+                                             'UTECH.UTCORE': Asset('UTECH.UTCORE')
                                          })
 
         handler.handle([transaction], lambda: True)
 
         self.assertTrue(transaction.closed, 'Transaction must be properly processed')
-
