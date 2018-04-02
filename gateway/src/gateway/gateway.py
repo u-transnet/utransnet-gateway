@@ -44,6 +44,10 @@ class BaseGateway(object):
     def stop(self):
         self.transfer_listener.stop()
 
+    @property
+    def active(self):
+        return self.transfer_listener.active
+
 
 class BitsharesGateway(BaseGateway):
     ASSETS_MAPPING = {

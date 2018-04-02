@@ -57,25 +57,33 @@ class BaseAccountTransfersListener:
         self.handlers.append(handler)
 
     def start(self):
-        self.state.active = True
+        self.active = True
         self.blocker.acquire()
         try:
-            while self.state.active:
+            while self.active:
                 new_transactions = self.transfers_processors.process_transactions()
                 for handler in self.handlers:
-                    handler.handle(new_transactions, lambda: self.state.active)
-                if self.state.active:
+                    handler.handle(new_transactions, lambda: self.active)
+                if self.active:
                     self.blocker.wait(self.update_time)
         finally:
             self.blocker.release()
 
     def stop(self):
-        self.state.active = False
+        self.active = False
         try:
             self.blocker.acquire()
             self.blocker.notify()
         finally:
             self.blocker.release()
+
+    @property
+    def active(self):
+        return self.state.active
+
+    @active.setter
+    def active(self, value):
+        self.state.active = value
 
 
 class BitSharesAccountTransfersListener(BaseAccountTransfersListener):
