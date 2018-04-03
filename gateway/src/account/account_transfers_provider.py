@@ -43,7 +43,7 @@ class AccountTransfersProvider(BaseAccountTransfersProvider, BaseApiProvider):
                 memo.get("message")
             )
         except Exception:
-            logger.exception("Can't decode memo")
+            logger.error("Can't decode memo")
             return ''
 
     def __fetch_transactions(self, first=None, last=0, limit=100):
@@ -73,6 +73,10 @@ class AccountTransfersProvider(BaseAccountTransfersProvider, BaseApiProvider):
                 }
             )
             if created:
+                if not account_internal:
+                    db_instance.error = True
+                    db_instance.save()
+                    continue
                 new_transactions.append(db_instance)
 
         return new_transactions

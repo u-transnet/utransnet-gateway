@@ -8,6 +8,7 @@ from gateway.src.account.account_transfers_provider import TransnetAccountTransf
 from gateway.src.gateway.base_gateway import BaseGateway
 from gateway.src.gateway.gateway_handler import TransnetGatewayHandler, BitsharesGatewayHandler
 
+
 class TransnetBasedGateway(BaseGateway):
     def __init__(self):
         self.transnet = Transnet(
@@ -45,7 +46,7 @@ class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
     def _create_transfers_handler(self):
         return BitsharesGatewayHandler(
             self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT,
-            self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT, settings.BITSHARES_GATEWAY_WIF_MEMO,
+            self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT, settings.TRANSNET_GATEWAY_WIF_MEMO,
             self.ASSETS_MAPPING
         )
 
@@ -62,12 +63,12 @@ class TransnetBitsharesGateway(TransnetBasedGateway, BitsharesBasedGateway):
     }
 
     def _create_transfers_handler(self):
-        TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
-                               self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT, settings.TRANSNET_GATEWAY_WIF_MEMO,
+        return TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
+                               self.bitshares, settings.BITSHARES_GATEWAY_ACCOUNT, settings.BITSHARES_GATEWAY_WIF_MEMO,
                                self.ASSETS_MAPPING
                                )
 
     def _create_transfers_provider(self):
-        TransnetAccountTransfersProvider(
+        return TransnetAccountTransfersProvider(
             self.transnet, settings.TRANSNET_GATEWAY_WIF_MEMO, settings.TRANSNET_GATEWAY_ACCOUNT,
             self.TRANSACTION_MODEL)

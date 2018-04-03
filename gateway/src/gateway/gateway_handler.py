@@ -46,16 +46,16 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
             "to": to_account["options"]["memo_key"]
         }
 
-    def _decode_memo(self, memo, blockchain_api):
+    def _decode_asset_issue_memo(self, memo_wif, memo, blockchain_api):
         try:
             return self.Memo.decode_memo(
-                self.PrivateKey(self.gateway_account_internal_memo_wif),
-                self.PublicKey(memo['from'], prefix=blockchain_api.prefix),
+                self.PrivateKey(memo_wif),
+                self.PublicKey(memo['to'], prefix=blockchain_api.prefix),
                 memo.get("nonce"),
                 memo.get("message")
             )
         except Exception:
-            logger.exception("Can't decode memo")
+            logger.error("Can't decode memo")
             return ''
 
     def issue_assets(self, blockchain_instance, amount, issuer, to, target_asset, message):
@@ -80,27 +80,34 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
         blockchain_instance.finalizeOp(operation, self.InternalConfig['default_account'], 'active')
 
     def burn_assets(self, amount, asset, account):
+        account = self.Account(account)
+
         self.blockchain_api_external.reserve(self.Amount(
             amount=amount,
             asset=asset,
         ), account)
 
-    def sync(self, transactions):
+    def sync(self, transactions, get_is_active=None):
         txs_map = {
             tx.trx_id: tx
             for tx in transactions
         }
 
+        gateway_account_internal = self.InternalAccount(self.gateway_account_internal)
+
         def filter_func(tx):
             operation_data = tx['op'][1]
-            return operation_data['issuer'] == self.gateway_account_internal.name and operation_data.get('memo')
+            return operation_data['issuer'] == gateway_account_internal['id'] and operation_data.get('memo')
 
-        issue_txs = self.gateway_account_internal.history(None, 0, 100, limit=['asset_issue'])
+        issue_txs = gateway_account_internal.history(None, 0, 100, only_ops=['asset_issue'])
         issue_txs = filter(filter_func, issue_txs)
 
         for tx in issue_txs:
+            if not get_is_active():
+                return
+
             operation_data = tx['op'][1]
-            memo = self._decode_memo(operation_data['memo'], self.blockchain_api_internal)
+            memo = self._decode_asset_issue_memo(self.gateway_account_internal_memo_wif, operation_data['memo'], self.blockchain_api_internal)
 
             if not memo:
                 continue
@@ -135,7 +142,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
             try:
                 self.issue_assets(self.blockchain_api_internal,
                                   transaction.amount, self.gateway_account_internal,
-                                  transaction.account_internal, target_asset, transaction.trx_id[:5])
+                                  transaction.account_internal, target_asset, transaction.trx_id)
             except Exception as ex:
                 logger.exception("WARNING: Can't issue assets for external account %s and internal account %s"
                                  "Trasaction: id %s, trx_id %s"
@@ -149,8 +156,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 self.burn_assets(transaction.amount, transaction.asset, self.gateway_account_external)
             except Exception as ex:
                 logger.exception("Can't burn assets for transaction %s " % (transaction.id))
-                transaction.error = True
-            else:
+            finally:
                 transaction.closed = True
 
             transaction.save()

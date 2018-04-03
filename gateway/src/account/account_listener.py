@@ -1,7 +1,5 @@
 from threading import Condition, Lock
 
-import signal
-
 
 class ListenerState:
     _active = False
@@ -27,24 +25,6 @@ class AccountTransfersListener:
         self.update_time = update_time
         self.state = ListenerState()
         self.blocker = Condition(Lock())
-        self.__register_signal_handlers()
-
-    def __register_signal_handlers(self):
-
-        def gracefully_stop(*args, **kwargs):
-            self.stop()
-
-        def create_handler(new_handler, signalnum):
-            old_handler = signal.getsignal(signalnum)
-
-            def wrapper(*args, **kwargs):
-                new_handler(*args, **kwargs)
-                old_handler(*args, **kwargs)
-
-            return wrapper
-
-        signal.signal(signal.SIGINT, create_handler(gracefully_stop, signal.SIGINT))
-        signal.signal(signal.SIGTERM, create_handler(gracefully_stop, signal.SIGTERM))
 
     def _create_transfers_processor(self, blockchain_api, account_address, transaction_model, memo_wif):
         raise NotImplementedError()

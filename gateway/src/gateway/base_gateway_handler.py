@@ -2,5 +2,5 @@ from gateway.src.account.base_account_listener_handler import BaseAccountListene
 
 
 class BaseGatewayAccountListenerHandler(BaseAccountListenerHandler):
-    def sync(self, transactions):
+    def sync(self, transactions, get_is_active=None):
         raise NotImplementedError()

@@ -6,8 +6,9 @@ from gateway.src.gateway.gateway import TransnetBitsharesGateway, BitsharesTrans
 
 
 class Blocker:
-    def __init__(self):
+    def __init__(self, active_gateways):
         self.active = False
+        self.active_gateways = active_gateways
 
         def gracefully_stop(*args, **kwargs):
             self.stop()
@@ -22,6 +23,8 @@ class Blocker:
 
     def stop(self):
         self.active = False
+        for gateway in self.active_gateways:
+            gateway.stop()
 
 
 class Command(BaseCommand):
@@ -41,8 +44,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         active_gateways = []
 
-        blocker = Blocker()
-
         for name in options['blockchain_name']:
             gateway_class = self.GATEWAYS.get(name)
             if not gateway_class:
@@ -53,5 +54,6 @@ class Command(BaseCommand):
 
             Thread(target=lambda: gateway.start()).start()
 
+        blocker = Blocker(active_gateways)
         if active_gateways:
             blocker.start()
