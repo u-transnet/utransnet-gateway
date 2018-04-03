@@ -1,7 +1,7 @@
 from bitshares import BitShares
+from django.conf import settings
 from transnet import Transnet
 
-from gateway import settings
 from gateway.models import BitsharesTransaction, TransnetTransaction
 from gateway.src.account.account_transfers_provider import TransnetAccountTransfersProvider, \
     BitsharesAccountTransfersProvider

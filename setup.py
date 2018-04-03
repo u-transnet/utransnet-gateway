@@ -4,7 +4,6 @@ requirements = [
     'django==2.0.2',
     'bitshares==0.1.11',
     'graphenelib==0.5.9',
-    'django-heroku',
     'gunicorn',
     'git+https://github.com/u-transnet/python-utransnet@transnet_naming'
 ]
