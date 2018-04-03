@@ -39,9 +39,7 @@ class BitsharesBasedGateway(BaseGateway):
 
 class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
     TRANSACTION_MODEL = BitsharesTransaction
-    ASSETS_MAPPING = {
-        'UTECH.UTCORE': 'UTECH.UTCORE'
-    }
+    ASSETS_MAPPING = settings.BTS_TRNS_ASSETS_MAPPING
 
     def _create_transfers_handler(self):
         return BitsharesGatewayHandler(
@@ -58,9 +56,7 @@ class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
 
 class TransnetBitsharesGateway(TransnetBasedGateway, BitsharesBasedGateway):
     TRANSACTION_MODEL = TransnetTransaction
-    ASSETS_MAPPING = {
-        'UTECH.UTCORE': 'UTECH.UTCORE'
-    }
+    ASSETS_MAPPING = settings.TRNS_BTS_ASSETS_MAPPING
 
     def _create_transfers_handler(self):
         return TransnetGatewayHandler(self.transnet, settings.TRANSNET_GATEWAY_ACCOUNT,
