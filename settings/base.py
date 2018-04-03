@@ -22,6 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 
 INSTALLED_APPS = [
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +49,7 @@ ROOT_URLCONF = 'utransnetgateway.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -61,18 +63,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'utransnetgateway.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -92,6 +82,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+JET_SIDE_MENU_COMPACT = True
+JET_SIDE_MENU_ITEMS = [
+    {'label': 'Доступ', 'items': [
+        {'name': 'auth.user'},
+        {'name': 'auth.group'}
+    ]},
+    {'label': 'Шлюзы', 'items': [
+        {'name': 'gateway.bitsharestransnettransaction'},
+        {'name': 'gateway.transnetbitsharestransaction'}
+    ]},
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -107,7 +109,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = '/media/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

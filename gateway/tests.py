@@ -1,14 +1,12 @@
 import threading
 
 from bitshares import BitShares
-from bitshares.asset import Asset
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
 from transnet import Transnet
-from transnet.asset import Asset as TransnetAsset
 
-from gateway.models import BitsharesTransaction, TransnetTransaction
+from gateway.models import BitsharesTransnetTransaction, TransnetBitsharesTransaction
 from gateway.src.account.account_listener import AccountTransfersListener
 from gateway.src.account.base_account_listener_handler import BaseAccountListenerHandler
 from gateway.src.account.account_transfers_provider import BitsharesAccountTransfersProvider, \
@@ -39,7 +37,7 @@ class BitSharesGatewayTest(TestCase):
 
         transfers_provider = BitsharesAccountTransfersProvider(
             self.bitshares, settings.BITSHARES_GATEWAY_WIF_MEMO, settings.BITSHARES_GATEWAY_ACCOUNT,
-            BitsharesTransaction
+            BitsharesTransnetTransaction
         )
         transfer_listener = AccountTransfersListener(transfers_provider)
         transfer_listener.add_handler(handler)
@@ -72,7 +70,7 @@ class BitSharesGatewayTest(TestCase):
         )
         transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
 
-        transaction = BitsharesTransaction.objects.create(
+        transaction = BitsharesTransnetTransaction.objects.create(
             trx_id='test',
             trx_in_block=3,
             op_in_trx=3,
@@ -108,7 +106,7 @@ class TransnetGatewayTest(TestCase):
         handler = TestAccountListenerHandler()
         transfers_provider = TransnetAccountTransfersProvider(self.transnet,
                                                               settings.TRANSNET_GATEWAY_WIF_MEMO,
-                                                              settings.TRANSNET_GATEWAY_ACCOUNT, TransnetTransaction)
+                                                              settings.TRANSNET_GATEWAY_ACCOUNT, TransnetBitsharesTransaction)
         transfer_listener = AccountTransfersListener(transfers_provider)
         transfer_listener.add_handler(handler)
 
@@ -140,7 +138,7 @@ class TransnetGatewayTest(TestCase):
         )
         transnet.set_default_account(settings.TRANSNET_GATEWAY_ACCOUNT)
 
-        transaction = TransnetTransaction.objects.create(
+        transaction = TransnetBitsharesTransaction.objects.create(
             trx_id='test',
             trx_in_block=3,
             op_in_trx=3,

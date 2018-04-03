@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from gateway.models import BitsharesTransaction, TransnetTransaction
+from gateway.models import BitsharesTransnetTransaction, TransnetBitsharesTransaction
 
 
-class BlockchainTransactionAdmin(admin.ModelAdmin):
+class TransactionAdmin(admin.ModelAdmin):
     list_display = ('trx_id', 'trx_in_block', 'op_in_trx', 'asset', 'amount', 'account_external', 'account_internal',
                     'closed', 'error', 'created')
     search_fields = ('trx_id', 'account_external', 'account_internal',)
@@ -14,11 +14,11 @@ class BlockchainTransactionAdmin(admin.ModelAdmin):
         return False
 
 
-@admin.register(BitsharesTransaction)
-class BitsharesBlockchainTransactionAdmin(BlockchainTransactionAdmin):
+@admin.register(BitsharesTransnetTransaction)
+class BitsharesTransnetTransactionAdmin(TransactionAdmin):
     pass
 
 
-@admin.register(TransnetTransaction)
-class TransnetBlockchainTransactionAdmin(BlockchainTransactionAdmin):
+@admin.register(TransnetBitsharesTransaction)
+class TransnetBitsharesTransactionAdmin(TransactionAdmin):
     pass

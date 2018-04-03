@@ -2,7 +2,7 @@ from bitshares import BitShares
 from django.conf import settings
 from transnet import Transnet
 
-from gateway.models import BitsharesTransaction, TransnetTransaction
+from gateway.models import BitsharesTransnetTransaction, TransnetBitsharesTransaction
 from gateway.src.account.account_transfers_provider import TransnetAccountTransfersProvider, \
     BitsharesAccountTransfersProvider
 from gateway.src.gateway.base_gateway import BaseGateway
@@ -38,7 +38,7 @@ class BitsharesBasedGateway(BaseGateway):
 
 
 class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
-    TRANSACTION_MODEL = BitsharesTransaction
+    TRANSACTION_MODEL = BitsharesTransnetTransaction
     ASSETS_MAPPING = settings.BTS_TRNS_ASSETS_MAPPING
 
     def _create_transfers_handler(self):
@@ -55,7 +55,7 @@ class BitsharesTransnetGateway(TransnetBasedGateway, BitsharesBasedGateway):
 
 
 class TransnetBitsharesGateway(TransnetBasedGateway, BitsharesBasedGateway):
-    TRANSACTION_MODEL = TransnetTransaction
+    TRANSACTION_MODEL = TransnetBitsharesTransaction
     ASSETS_MAPPING = settings.TRNS_BTS_ASSETS_MAPPING
 
     def _create_transfers_handler(self):
