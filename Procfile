@@ -1,1 +1,0 @@
-web: gunicorn utschoolfaucet.wsgi:application --log-file -
