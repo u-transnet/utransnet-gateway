@@ -26,6 +26,8 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
         self.gateway_account_internal_memo_wif = gateway_account_internal_memo_wif
         self.assets_mapping = assets_mapping or {}
 
+        self.assets_issues_txs_map = {}
+
     def _encrypt_memo(self, blockchain_instance, memo_wif, from_account, to_account, message):
         nonce = random.getrandbits(64)
 
@@ -77,7 +79,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
             "memo": self._encrypt_memo(blockchain_instance, self.gateway_account_internal_memo_wif, issuer, to, message)
         })
 
-        blockchain_instance.finalizeOp(operation, self.InternalConfig['default_account'], 'active')
+        return blockchain_instance.finalizeOp(operation, self.InternalConfig['default_account'], 'active')
 
     def burn_assets(self, amount, asset, account):
         account = self.Account(account)
@@ -87,12 +89,26 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
             asset=asset,
         ), account)
 
-    def sync(self, transactions, get_is_active=None):
-        txs_map = {
-            tx.trx_id: tx
-            for tx in transactions
-        }
+    def __sync_transaction(self, db_tx):
 
+        operation_data = self.assets_issues_txs_map.get(db_tx.trx_id)
+        if not operation_data:
+            return
+
+        asset = self.InternalAsset(operation_data['asset_to_issue']['asset_id'])
+        amount = operation_data['asset_to_issue']['amount'] / 10 ** asset.precision
+        issue_to_account = self.InternalAccount(operation_data['issue_to_account'])
+
+        if db_tx.amount == amount \
+                and db_tx.asset == asset.symbol \
+                and db_tx.account_internal == issue_to_account.name:
+            db_tx.closed = True
+        else:
+            db_tx.error = True
+
+        db_tx.save()
+
+    def sync(self, transactions, get_is_active=None):
         gateway_account_internal = self.InternalAccount(self.gateway_account_internal)
 
         def filter_func(tx):
@@ -107,27 +123,16 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 return
 
             operation_data = tx['op'][1]
-            memo = self._decode_asset_issue_memo(self.gateway_account_internal_memo_wif, operation_data['memo'], self.blockchain_api_internal)
+            memo = self._decode_asset_issue_memo(self.gateway_account_internal_memo_wif, operation_data['memo'],
+                                                 self.blockchain_api_internal)
 
             if not memo:
                 continue
 
-            db_tx = txs_map.get(memo)  # remove 1.11. part of transaction id
-            if not db_tx:
-                continue
+            self.assets_issues_txs_map[memo] = operation_data
 
-            asset = self.InternalAsset(operation_data['asset_to_issue']['asset_id'])
-            amount = operation_data['asset_to_issue']['amount'] / 10 ** asset.precision
-            issue_to_account = self.InternalAccount(operation_data['issue_to_account'])
-
-            if db_tx.amount == amount \
-                    and db_tx.asset == asset.symbol \
-                    and db_tx.account_internal == issue_to_account.name:
-                db_tx.closed = True
-            else:
-                db_tx.error = True
-
-            db_tx.save()
+        for transaction in transactions:
+            self.__sync_transaction(transaction)
 
     def handle(self, transactions, get_is_active):
         for transaction in transactions:
@@ -139,10 +144,14 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 logger.error("Unrecognized assets %s" % transaction.asset)
                 continue
 
+            self.__sync_transaction(transaction)
+            if transaction.closed or transaction.error:
+                continue
+
             try:
-                self.issue_assets(self.blockchain_api_internal,
-                                  transaction.amount, self.gateway_account_internal,
-                                  transaction.account_internal, target_asset, transaction.trx_id)
+                issue_tx = self.issue_assets(self.blockchain_api_internal,
+                                             transaction.amount, self.gateway_account_internal,
+                                             transaction.account_internal, target_asset, transaction.trx_id)
             except Exception as ex:
                 logger.exception("WARNING: Can't issue assets for external account %s and internal account %s"
                                  "Trasaction: id %s, trx_id %s"
@@ -152,12 +161,13 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 transaction.save()
                 continue
 
+            self.assets_issues_txs_map[transaction.trx_id] = issue_tx['operations'][0][1]
+
             try:
                 self.burn_assets(transaction.amount, transaction.asset, self.gateway_account_external)
             except Exception as ex:
-                logger.exception("Can't burn assets for transaction %s " % (transaction.id))
-            finally:
-                transaction.closed = True
+                logger.exception("Can't burn assets for transaction %s " % transaction.id)
+            transaction.closed = True
 
             transaction.save()
 
