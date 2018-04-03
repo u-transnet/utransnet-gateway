@@ -19,12 +19,22 @@ class AbstractBlockchainTransaction(models.Model):
 
 
 class BitsharesTransaction(AbstractBlockchainTransaction):
+
+    def __str__(self):
+        return 'Транзакция: %s' % self.trx_id
+
     class Meta:
         verbose_name = 'транзакция в BitShares'
         verbose_name_plural = 'транзакции в BitShares'
+        ordering = ('-trx_id', )
 
 
 class TransnetTransaction(AbstractBlockchainTransaction):
+
+    def __str__(self):
+        return 'Транзакция: %s' % self.trx_id
+
     class Meta:
         verbose_name = 'транзакция в Transnet'
         verbose_name_plural = 'транзакции в Transnet'
+        ordering = ('-trx_id', )

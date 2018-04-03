@@ -6,7 +6,8 @@ from gateway.models import BitsharesTransaction, TransnetTransaction
 class BlockchainTransactionAdmin(admin.ModelAdmin):
     list_display = ('trx_id', 'trx_in_block', 'op_in_trx', 'asset', 'amount', 'account_external', 'account_internal',
                     'closed', 'error', 'created')
-    list_filter = ('closed', 'error', 'created')
+    search_fields = ('trx_id', 'account_external', 'account_internal',)
+    list_filter = ('asset', 'closed', 'error', 'created')
     readonly_fields = ('trx_id', 'trx_in_block', 'op_in_trx', 'asset', 'amount', 'account_external', 'account_internal')
 
     def has_add_permission(self, request):
