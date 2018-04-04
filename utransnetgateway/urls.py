@@ -15,11 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, reverse_lazy
+from two_factor.gateways.twilio.urls import urlpatterns as tf_twilio_urls
+from two_factor.urls import urlpatterns as tf_urls
 from django.views.generic import RedirectView
 
+from two_factor.admin import AdminSiteOTPRequired
+
+admin.site.__class__ = AdminSiteOTPRequired
+
 urlpatterns = [
+    path('', include(tf_urls)),
+    path('', include(tf_twilio_urls)),
     path('jet/', include('jet.urls', 'jet')),
-    path('jet/dashboard/', include('jet.dashboard.urls', 'jauth_user_changelistet-dashboard')),
-    path('', RedirectView.as_view(url=reverse_lazy('admin:site_settings_settingsmodel_change', args=(1,)), permanent=True)),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
+    path('', RedirectView.as_view(url=reverse_lazy('admin:site_settings_settingsmodel_change', args=(1,)), permanent=False)),
     path('', admin.site.urls),
 ]

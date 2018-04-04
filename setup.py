@@ -6,7 +6,9 @@ requirements = [
     'graphenelib==0.5.9',
     'gunicorn',
     'git+https://github.com/u-transnet/python-utransnet@transnet_naming',
-    'django-jet'
+    'django-jet',
+    'django-two-factor-auth',
+    'twilio'
 ]
 
 if __name__ == '__setup__':
