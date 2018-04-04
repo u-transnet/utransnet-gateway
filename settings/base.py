@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'two_factor',
 
+    'auth_custom',
     'site_settings',
     'gateway'
 ]
@@ -93,7 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
 JET_SIDE_MENU_COMPACT = True
 JET_SIDE_MENU_ITEMS = [
     {'label': 'Доступ', 'items': [
-        {'name': 'auth.user'},
+        {'name': 'auth_custom.user'},
         {'name': 'auth.group'}
     ]},
     {'label': 'Шлюзы', 'items': [
@@ -104,9 +105,10 @@ JET_SIDE_MENU_ITEMS = [
 
 # Two factor auth
 LOGIN_URL = 'two_factor:login'
-LOGIN_REDIRECT_URL = 'two_factor:profile'
 
 TWO_FACTOR_SMS_GATEWAY = 'two_factor.gateways.twilio.gateway.Twilio'
+
+AUTH_USER_MODEL = 'auth_custom.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
