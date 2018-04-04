@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, reverse_lazy
 from two_factor.gateways.twilio.urls import urlpatterns as tf_twilio_urls
-from two_factor.urls import urlpatterns as tf_urls
+from auth_custom.urls import urlpatterns as tf_urls
 from django.views.generic import RedirectView
 
 from two_factor.admin import AdminSiteOTPRequired
