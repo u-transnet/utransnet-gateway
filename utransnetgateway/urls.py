@@ -19,7 +19,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
-    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-    path('', RedirectView.as_view(url=reverse_lazy('admin:auth_user_changelist'), permanent=True)),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jauth_user_changelistet-dashboard')),
+    path('', RedirectView.as_view(url=reverse_lazy('admin:site_settings_settingsmodel_change', args=(1,)), permanent=True)),
     path('', admin.site.urls),
 ]
