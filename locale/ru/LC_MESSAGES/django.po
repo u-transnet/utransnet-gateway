@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-04 22:10+0000\n"
+"POT-Creation-Date: 2018-04-05 01:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,6 +111,11 @@ msgstr "Ключ примечаний (WIF)"
 #: site_settings/models.py:9 site_settings/models.py:14
 msgid "URL of node"
 msgstr "URL-адрес ноды"
+
+#: site_settings/models.py:17 site_settings/models.py:32
+#: site_settings/models.py:33
+msgid "Settings"
+msgstr "Настройки"
 
 #: templates/admin/base.html:60
 msgid "Welcome,"

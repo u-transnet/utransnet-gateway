@@ -13,6 +13,9 @@ class SettingsModel(models.Model):
     transnet_bitshares_memo_wif = models.CharField(verbose_name=_('Memo key (WIF)'), max_length=255)
     transnet_bitshares_node_url = models.URLField(verbose_name=_('URL of node'))
 
+    def __str__(self):
+        return _('Settings')
+
     def save(self, *args, **kwargs):
         self.pk = 1
         super(SettingsModel, self).save(*args, **kwargs)
@@ -24,3 +27,7 @@ class SettingsModel(models.Model):
     def load(cls):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
+
+    class Meta:
+        verbose_name = _('Settings')
+        verbose_name_plural = _('Settings')
