@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -93,11 +94,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 JET_SIDE_MENU_COMPACT = True
 JET_SIDE_MENU_ITEMS = [
-    {'label': 'Доступ', 'items': [
+    {'label': _('Access'), 'items': [
         {'name': 'auth_custom.user'},
         {'name': 'auth.group'}
     ]},
-    {'label': 'Шлюзы', 'items': [
+    {'label': _('Gateways'), 'items': [
         {'name': 'gateway.bitsharestransnettransaction'},
         {'name': 'gateway.transnetbitsharestransaction'}
     ]},
@@ -119,6 +120,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

@@ -1,17 +1,17 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class SettingsModel(models.Model):
 
-    bitshares_transnet_gateway_address = models.CharField(verbose_name='адрес', max_length=255)
-    bitshares_transnet_active_wif = models.CharField(verbose_name='активный ключ', max_length=255)
-    bitshares_transnet_memo_wif = models.CharField(verbose_name='memo ключ', max_length=255)
-    bitshares_transnet_node_url = models.URLField(verbose_name='адрес ноды для подключения')
+    bitshares_transnet_gateway_address = models.CharField(verbose_name=_('Address'), max_length=255)
+    bitshares_transnet_active_wif = models.CharField(verbose_name=_('Active key (WIF)'), max_length=255)
+    bitshares_transnet_memo_wif = models.CharField(verbose_name=_('Memo key (WIF)'), max_length=255)
+    bitshares_transnet_node_url = models.URLField(verbose_name=_('URL of node'))
 
-    transnet_bitshares_gateway_address = models.CharField(verbose_name='адрес', max_length=255)
-    transnet_bitshares_active_wif = models.CharField(verbose_name='активный ключ', max_length=255)
-    transnet_bitshares_memo_wif = models.CharField(verbose_name='memo ключ', max_length=255)
-    transnet_bitshares_node_url = models.URLField(verbose_name='адрес ноды для подключения')
+    transnet_bitshares_gateway_address = models.CharField(verbose_name=_('Address'), max_length=255)
+    transnet_bitshares_active_wif = models.CharField(verbose_name=_('Active key (WIF)'), max_length=255)
+    transnet_bitshares_memo_wif = models.CharField(verbose_name=_('Memo key (WIF)'), max_length=255)
+    transnet_bitshares_node_url = models.URLField(verbose_name=_('URL of node'))
 
     def save(self, *args, **kwargs):
         self.pk = 1

@@ -5,12 +5,13 @@ from django.db.models.signals import post_save
 from django_otp.util import random_hex
 from phonenumber_field.modelfields import PhoneNumberField
 from two_factor.models import PhoneDevice
+from django.utils.translation import gettext_lazy as _
 
 
 class User(auth_models.AbstractUser):
     REQUIRED_FIELDS = ['email', 'phone']
 
-    phone = PhoneNumberField(verbose_name='Номер телефона')
+    phone = PhoneNumberField(verbose_name=_('Phone number'))
 
     @staticmethod
     def post_save(sender, **kwargs):
