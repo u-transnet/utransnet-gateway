@@ -6,12 +6,12 @@ class SettingsModel(models.Model):
     bitshares_transnet_gateway_address = models.CharField(verbose_name=_('Address'), max_length=255)
     bitshares_transnet_active_wif = models.CharField(verbose_name=_('Active key (WIF)'), max_length=255)
     bitshares_transnet_memo_wif = models.CharField(verbose_name=_('Memo key (WIF)'), max_length=255)
-    bitshares_transnet_node_url = models.URLField(verbose_name=_('URL of node'))
+    bitshares_transnet_node_url = models.CharField(verbose_name=_('URL of node'), max_length=255)
 
     transnet_bitshares_gateway_address = models.CharField(verbose_name=_('Address'), max_length=255)
     transnet_bitshares_active_wif = models.CharField(verbose_name=_('Active key (WIF)'), max_length=255)
     transnet_bitshares_memo_wif = models.CharField(verbose_name=_('Memo key (WIF)'), max_length=255)
-    transnet_bitshares_node_url = models.URLField(verbose_name=_('URL of node'))
+    transnet_bitshares_node_url = models.CharField(verbose_name=_('URL of node'), max_length=255)
 
     def __str__(self):
         return _('Settings')
