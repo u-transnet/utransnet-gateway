@@ -5,7 +5,7 @@ requirements = [
     'bitshares==0.1.11',
     'graphenelib==0.5.9',
     'gunicorn',
-    'git+https://github.com/u-transnet/python-utransnet@transnet_naming',
+    'git+https://github.com/u-transnet/python-utransnet',
     'django-jet',
     'django-two-factor-auth',
     'twilio'
