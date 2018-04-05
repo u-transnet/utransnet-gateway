@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as __
 
 
 class AbstractBlockchainTransaction(models.Model):
@@ -16,7 +17,7 @@ class AbstractBlockchainTransaction(models.Model):
     created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
 
     def __str__(self):
-        return _('Transaction')+': %s' % self.trx_id
+        return __('Transaction')+': %s' % self.trx_id
 
     class Meta:
         abstract = True

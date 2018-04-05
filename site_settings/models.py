@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as __
 
 class SettingsModel(models.Model):
 
@@ -14,7 +15,7 @@ class SettingsModel(models.Model):
     transnet_bitshares_node_url = models.CharField(verbose_name=_('URL of node'), max_length=255)
 
     def __str__(self):
-        return _('Settings')
+        return __('Settings')
 
     def save(self, *args, **kwargs):
         self.pk = 1
