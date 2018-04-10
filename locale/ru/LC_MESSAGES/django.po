@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-10 08:19+0300\n"
+"POT-Creation-Date: 2018-04-10 08:33+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,23 +100,39 @@ msgstr "Доступ"
 msgid "Gateways"
 msgstr "Шлюзы"
 
-#: site_settings/models.py:7 site_settings/models.py:12
+#: site_settings/models.py:7 site_settings/models.py:15
 msgid "Address"
 msgstr "Адрес"
 
-#: site_settings/models.py:8 site_settings/models.py:13
+#: site_settings/models.py:8
+msgid "Address of the account that will be used as gateway in BitShares"
+msgstr "Адрес аккаунта, который будет использоваться для шлюза в BitShares"
+
+#: site_settings/models.py:10 site_settings/models.py:19
 msgid "Active key (WIF)"
 msgstr "Активный ключ (WIF)"
 
-#: site_settings/models.py:9 site_settings/models.py:14
+#: site_settings/models.py:11 site_settings/models.py:20
 msgid "Memo key (WIF)"
 msgstr "Ключ примечаний (WIF)"
 
-#: site_settings/models.py:10 site_settings/models.py:15
+#: site_settings/models.py:12 site_settings/models.py:21
 msgid "URL of node"
 msgstr "URL-адрес ноды"
 
-#: site_settings/models.py:33 site_settings/models.py:34
+#: site_settings/models.py:13
+msgid "URL of the node for interacting with BitShares"
+msgstr "URL ноды для взаимодействия с BitShares"
+
+#: site_settings/models.py:16
+msgid "Address of the account that will be used as gateway in Transnet"
+msgstr "Адрес аккаунта, который будет использоваться для шлюза в Transnet"
+
+#: site_settings/models.py:22
+msgid "URL of the node for interacting with Transnet"
+msgstr "URL ноды для взаимодействия с Transnet"
+
+#: site_settings/models.py:40 site_settings/models.py:41
 msgid "Settings"
 msgstr "Настройки"
 
