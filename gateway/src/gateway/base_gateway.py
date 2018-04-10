@@ -46,7 +46,7 @@ class BaseGateway(object):
         txs = self.TRANSACTION_MODEL.objects.all()
         self.transfers_handler.sync(txs, lambda: self.gateway_sync_state.active)
 
-        non_processed_txs = txs.filter(error=False, closed=False)
+        non_processed_txs = txs.filter(state=self.TRANSACTION_MODEL.STATE_IDLE)
         if non_processed_txs.count():
             self.transfers_handler.handle(non_processed_txs, lambda: self.gateway_sync_state.active)
         self.gateway_sync_state.active = False
