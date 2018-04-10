@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-05 01:26+0300\n"
+"POT-Creation-Date: 2018-04-10 08:19+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,55 +36,59 @@ msgstr "Важные даты"
 msgid "Phone number"
 msgstr "Номер телефона"
 
-#: gateway/models.py:6
-msgid "Transaction ID"
-msgstr "ID транзакции"
-
-#: gateway/models.py:7
-msgid "Number of transaction in blck"
-msgstr "Номер транзакции в блоке"
-
-#: gateway/models.py:8
-msgid "Number of operation in transaction"
-msgstr "Номер операции в транзакции"
-
-#: gateway/models.py:9
-msgid "Asset"
-msgstr "Токен"
-
-#: gateway/models.py:10
-msgid "Amount"
-msgstr "Количество"
-
-#: gateway/models.py:11
-msgid "External blockchain account"
-msgstr "Внешний аккаунт"
-
-#: gateway/models.py:12
-msgid "Internal blockchain account"
-msgstr "Внутренний аккаунт"
+#: gateway/models.py:13
+msgid "Idle"
+msgstr "Не обработано"
 
 #: gateway/models.py:14
-msgid "Closed"
-msgstr "Закрыта"
+msgid "Complete"
+msgstr "Обработано"
 
 #: gateway/models.py:15
 msgid "Error"
 msgstr "Ошибка"
 
-#: gateway/models.py:16
+#: gateway/models.py:18
+msgid "Transaction ID"
+msgstr "ID транзакции"
+
+#: gateway/models.py:19
+msgid "Number of transaction in blck"
+msgstr "Номер транзакции в блоке"
+
+#: gateway/models.py:20
+msgid "Number of operation in transaction"
+msgstr "Номер операции в транзакции"
+
+#: gateway/models.py:21
+msgid "Asset"
+msgstr "Токен"
+
+#: gateway/models.py:22
+msgid "Amount"
+msgstr "Количество"
+
+#: gateway/models.py:23
+msgid "External blockchain account"
+msgstr "Внешний аккаунт"
+
+#: gateway/models.py:24
+msgid "Internal blockchain account"
+msgstr "Внутренний аккаунт"
+
+#: gateway/models.py:26
+msgid "State"
+msgstr "Состояние"
+
+#: gateway/models.py:27
 msgid "Created"
 msgstr "Создано"
 
-#: gateway/models.py:19
-msgid "Transaction"
-msgstr "Транзакция"
-
-#: gateway/models.py:28 gateway/models.py:29
+#: gateway/models.py:39 gateway/models.py:40
 msgid "Bitshares to Transnet"
 msgstr "Bitshares в Transnet"
 
-#: gateway/models.py:36 gateway/models.py:37
+#: gateway/models.py:47 gateway/models.py:48
 msgid "Transnet to Bitshares"
 msgstr "Transnet в Bitshares"
 
@@ -96,24 +100,23 @@ msgstr "Доступ"
 msgid "Gateways"
 msgstr "Шлюзы"
 
-#: site_settings/models.py:6 site_settings/models.py:11
+#: site_settings/models.py:7 site_settings/models.py:12
 msgid "Address"
 msgstr "Адрес"
 
-#: site_settings/models.py:7 site_settings/models.py:12
+#: site_settings/models.py:8 site_settings/models.py:13
 msgid "Active key (WIF)"
 msgstr "Активный ключ (WIF)"
 
-#: site_settings/models.py:8 site_settings/models.py:13
+#: site_settings/models.py:9 site_settings/models.py:14
 msgid "Memo key (WIF)"
 msgstr "Ключ примечаний (WIF)"
 
-#: site_settings/models.py:9 site_settings/models.py:14
+#: site_settings/models.py:10 site_settings/models.py:15
 msgid "URL of node"
 msgstr "URL-адрес ноды"
 
-#: site_settings/models.py:17 site_settings/models.py:32
-#: site_settings/models.py:33
+#: site_settings/models.py:33 site_settings/models.py:34
 msgid "Settings"
 msgstr "Настройки"
 
@@ -241,3 +244,9 @@ msgstr "Забыли пароль или имя пользователя?"
 #: templates/two_factor/core/login.html:35
 msgid "Log in"
 msgstr "Войти"
+
+#~ msgid "Closed"
+#~ msgstr "Закрыта"
+
+#~ msgid "Transaction"
+#~ msgstr "Транзакция"

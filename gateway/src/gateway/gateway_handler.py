@@ -102,9 +102,9 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
         if db_tx.amount == amount \
                 and db_tx.asset == asset.symbol \
                 and db_tx.account_internal == issue_to_account.name:
-            db_tx.closed = True
+            db_tx.state = db_tx.STATE_COMPLETE
         else:
-            db_tx.error = True
+            db_tx.state = db_tx.STATE_ERROR
 
         db_tx.save()
 
@@ -145,7 +145,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 continue
 
             self.__sync_transaction(transaction)
-            if transaction.closed or transaction.error:
+            if transaction.state != transaction.STATE_IDLE:
                 continue
 
             try:
@@ -157,7 +157,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                                  "Trasaction: id %s, trx_id %s"
                                  % (transaction.account_external, transaction.account_internal,
                                     transaction.id, transaction.trx_id))
-                transaction.error = True
+                transaction.state = transaction.STATE_ERROR
                 transaction.save()
                 continue
 
@@ -167,7 +167,7 @@ class GatewayAccountListenerHandler(BaseInternalApiProvider, BaseApiProvider, Ba
                 self.burn_assets(transaction.amount, transaction.asset, self.gateway_account_external)
             except Exception as ex:
                 logger.exception("Can't burn assets for transaction %s " % transaction.id)
-            transaction.closed = True
+            transaction.state = transaction.STATE_COMPLETE
 
             transaction.save()
 
