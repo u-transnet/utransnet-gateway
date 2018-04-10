@@ -131,7 +131,7 @@ msgstr "Документация"
 
 #: templates/admin/base.html:74
 msgid "Change password"
-msgstr "Изменить паролт"
+msgstr "Изменить пароль"
 
 #: templates/admin/base.html:76
 msgid "Log out"
