@@ -4,20 +4,20 @@
 Шлюз для перевода средств из BitShares в Transnet и обратно, реализованный на Django.
 Для данного шлюза так же имеется отдельный [репозиторий](https://github.com/u-transnet/utransnet-gateway-dockerfiles) с docker'ом для упрощения развертывания шлюза.
 
-
-## Installation
+## Установка
 ```
 git clone https://github.com/u-transnet/utransnet-gateway
 ```
 
-Also we have docker container for this project, just click the image
+Так же для данного проекта есть докер контейнер, чтобы ознакомиться с ним просто кликните по изображению
 
 [![Docker](https://www.docker.com/sites/default/files/horizontal.png)](https://github.com/u-transnet/utransnet-gateway-dockerfiles)
 
-## Configurations
+## Руководство по началу работы
 
 Для запуска проекта Вам необходимо создать файл конфигураций settings/local.py
 Содержание файла должны иметь следующий вид.
+
 ```
 from .base import *
 from .development import *  # или production
@@ -53,7 +53,8 @@ DATABASES = {
 
 ```
 
-## Two-factor auth
+
+## Двухфакторная авторизация
 
 В проект добавлена двухфакторная авторизация для обеспечения более высокого уровня
 безопасноти доступа к панели администратора. <br>
@@ -68,7 +69,7 @@ TWILIO_AUTH_TOKEN = ''  # Auth token
 TWILIO_CALLER_ID = ''  # Номер телефона, который будет использоваться
 ```
 
-## Start gateway
+## Запуск шлюза
 
 Управление шлюзом происходит с помощью с management-команд Django.
 ```
@@ -78,13 +79,13 @@ python3 manage.py activate_gateway bitshares_transnet
 python3 manage.py activate_gateway transnet_bitshares
 ```
 
-## Related projects
+## Связанные проекты
 - [python-utransnet](https://github.com/u-transnet/python-utransnet)
 - [python-bitshares](https://github.com/xeroc/python-bitshares)
 
-## Contributing
-We'd love to have your helping hand on our project! See [CONTRIBUTING.md](CONTRIBUTING.md) for more information on what we're looking for and how to get started.
+## Сотрудничество
+Мы будем рады вашей помощи в развитии проекта! Откройте [CONTRIBUTING.ru.md](CONTRIBUTING.ru.md) для того, чтобы узнать чем Вы можете поможете помочь проекту и как присоединиться
 
-## License
-Project is under the MIT license. See [LICENSE](LICENSE) for more information.
+## Лицензия
+Проект использует MIT лицензию. Откройте [LICENSE](LICENSE) для подробностей
 
